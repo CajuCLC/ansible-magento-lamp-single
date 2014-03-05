@@ -1,0 +1,19 @@
+---
+- name: Install httpd
+  yum: name=httpd state=present
+
+- name: Create Folder
+  command: mkdir -p /etc/httpd/vhost.d/
+  
+- name: Copy httpd configuration for domain
+  template: src=vhost.conf dest=/etc/httpd/vhost.d/{{ server_hostname }}.conf
+
+- name: Copy httpd configuration for httpd
+  template: src=httpd.conf dest=/etc/httpd/conf/httpd.conf
+
+- name: Copy httpd configuration for ports
+  template: src=ports.conf dest=/etc/httpd/ports.conf
+  notify: restart httpd
+
+- name: restart httpd
+  service: name=httpd state=restarted

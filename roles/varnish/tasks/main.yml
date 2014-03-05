@@ -1,0 +1,15 @@
+---
+- name: Install RPM
+  shell: rpm --nosignature -i http://repo.varnish-cache.org/redhat/varnish-3.0/el6/noarch/varnish-release/varnish-release-3.0-1.el6.noarch.rpm
+
+- name: Install Varnish
+  yum: name=varnish state=present
+  
+- name: Copy httpd configuration for domain
+  template: src=varnish dest=/etc/sysconfig/varnish
+
+- name: Copy httpd configuration for httpd
+  template: src=default.vcl dest=/etc/varnish/default.vcl
+
+- name: restart varnish
+  service: name=varnish state=restarted

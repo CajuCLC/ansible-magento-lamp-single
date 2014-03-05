@@ -1,0 +1,16 @@
+# Ansible playbook to install Magento on a server.
+# Change hosts.yml to your server IP.
+# Run with: ansible-playbook -i hosts.yml magento.yml -vvv
+
+---
+- name: Install magento, MySQL, httpd, PHP and Varnish
+  hosts: magento-server
+  user: root
+
+  roles:
+    - common
+    - mysql 
+    - httpd
+    - php
+    - magento
+    - varnish

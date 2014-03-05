@@ -1,0 +1,9 @@
+---
+- name: Open port 80
+  shell: sudo iptables -I INPUT 1 -p tcp --dport 80 -j ACCEPT
+  
+- name: Save Iptables
+  shell: sudo /etc/init.d/iptables save
+  
+- name: restart iptables
+  service: name=iptables state=restarted

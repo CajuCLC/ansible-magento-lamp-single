@@ -1,0 +1,13 @@
+---
+- name: Install php and deps 
+  yum: name={{ item }} state=present
+  with_items:
+    - php
+    - php-xml
+    - php-pdo_mysql
+    - php-xml
+    - php-mbstring
+    - php-mysql
+    - php-gd
+    - php-mcrypt
+    - mod_ssl
