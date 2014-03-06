@@ -5,11 +5,11 @@
 - name: Install Varnish
   yum: name=varnish state=present
   
-- name: Copy httpd configuration for domain
+- name: Copy varnish configuration
   template: src=varnish dest=/etc/sysconfig/varnish
 
-- name: Copy httpd configuration for httpd
+- name: Copy varnish vcl configuration
   template: src=default.vcl dest=/etc/varnish/default.vcl
 
-- name: restart varnish
-  service: name=varnish state=restarted
+- name: Start varnish
+  service: name=varnish state=started enabled=yes
