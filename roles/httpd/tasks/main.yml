@@ -16,4 +16,4 @@
   notify: restart httpd
 
 - name: restart httpd
-  service: name=httpd state=restarted
+  service: name=httpd state=started enabled=yes
