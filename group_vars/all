@@ -11,7 +11,7 @@ magento_db_password: secret
 mysql_port: 3306
 
 # This is used for the httpd vhost configuration and folders creation.
-server_hostname: ansiblemage.cloudtutorial.net
+server_hostname: YOURDOMAIN.COM
 
 # Magento Admin info
 magento_admin_first: admin_first
