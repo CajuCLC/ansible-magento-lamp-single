@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: Eric Cavalcanti
-  description: Create a Rackspace Cloud Server, install Apache + PHP + Varnish + MySQL and install Magento at the end.
+  description: Install Apache + PHP + Varnish + MySQL and install Magento at the end.
   company: Rackspace
   license: license (GPLv3)
   min_ansible_version: 1.5
