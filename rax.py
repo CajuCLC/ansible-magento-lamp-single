@@ -1,3 +1,3 @@
 [rackspace_cloud]
-username = YOUR_USERNAME
-api_key = YOUR_API_KEY
+username = USERNAME
+api_key = API_KEY

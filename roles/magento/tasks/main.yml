@@ -15,22 +15,26 @@
 
 - name: Download Sample
   get_url: url=http://www.magentocommerce.com/downloads/assets/{{ sample_version }}/magento-sample-data-{{ sample_version }}.tar.gz dest=/var/www/vhosts/{{ server_hostname }}/magento-sample-data-{{ sample_version }}.tar.gz
-  
+  when: sample_data == 'install'
+
 - name: Extract Magento
   command: chdir=/var/www/vhosts/{{ server_hostname }}/ /bin/tar xvf magento-{{ magento_version }}.tar.gz
 
 - name: Extract Sample
   command: chdir=/var/www/vhosts/{{ server_hostname }}/ /bin/tar xvf magento-sample-data-{{ sample_version }}.tar.gz
+  when: sample_data == 'install'
  
 - name: Move Media Sample
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ cp -rf magento-sample-data-{{ sample_version }}/media/* magento/media/
+  when: sample_data == 'install'
 
 - name: Move Skin Sample
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ cp -rf magento-sample-data-{{ sample_version }}/skin/* magento/skin/
-  when: sample_version == "1.9.0.0"
+  when: sample_version == "1.9.0.0" and sample_data == 'install'
 
 - name: Move Sample SQL
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ mv -f magento-sample-data-{{ sample_version }}/magento_sample_data_for_{{ sample_version }}.sql magento/data.sql
+  when: sample_data == 'install'
 
 - name: Move Magento to Root
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ mv -f magento/* .
@@ -38,8 +42,8 @@
 - name: Move htaccess file
   command: chdir=/var/www/vhosts/{{ server_hostname }}/ mv -f magento/.htaccess .
   
-- name: Add user "magento"
-  user: name=magento group=apache home=/var/www/vhosts/{{ server_hostname }}
+- name: Add user "web_user"
+  user: name={{ web_user }} group=apache home=/var/www/vhosts/{{ server_hostname }}
 
 - name: Create magento database
   mysql_db: name={{ magento_db_name }} state=present
@@ -47,26 +51,12 @@
 - name: Create magento database user
   mysql_user: name={{ magento_db_user }} password={{ magento_db_password }} priv={{ magento_db_name }}.*:ALL host='localhost' state=present
   
-- name: Import Sample
+- name: Import Sample Database
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ mysql -u {{ magento_db_user }} -p{{ magento_db_password }} {{ magento_db_name }} < data.sql
+  when: sample_data == 'install'
 
-- name: Change ownership of magento installation 1
-  file: path=/var/www/vhosts/{{ server_hostname }}/ owner=magento group=apache state=directory recurse=yes
-
-- name: Change ownership of magento installation 2
-  shell: chdir=/var/www/vhosts/{{ server_hostname }}/ find . -type f -exec chmod 644 {} \;
-
-- name: Change ownership of magento installation 3
-  shell: chdir=/var/www/vhosts/{{ server_hostname }}/ find . -type d -exec chmod 755 {} \;
-
-- name: Change ownership of magento installation 4
-  shell: chdir=/var/www/vhosts/{{ server_hostname }}/ chmod o+w var var/.htaccess app/etc
-
-- name: Change ownership of magento installation 5
+- name: Set Permission file MAGE
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ chmod 550 mage
-
-- name: Change ownership of magento installation 6
-  shell: chdir=/var/www/vhosts/{{ server_hostname }}/ chmod -R o+w media
 
 - name: Mage Setup
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ ./mage mage-setup .
@@ -77,14 +67,36 @@
 - name: Install Magento
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ php -f install.php -- --license_agreement_accepted "yes" --locale "en_US" --timezone "America/Phoenix" --default_currency "USD" --db_host localhost --db_name {{ magento_db_name }} --db_user {{ magento_db_user }} --db_pass {{ magento_db_password }} --url {{ magento_domain }} --skip_url_validation --use_rewrites "yes" --use_secure "no" --secure_base_url "" --use_secure_admin "no" --admin_firstname {{ magento_admin_first }} --admin_lastname {{ magento_admin_last }} --admin_email {{ magento_admin_email }} --admin_username {{ magento_admin_user }} --admin_password {{ magento_admin_pass }}
 
+- name: Change ownership of magento to user created and group apache
+  file: path=/var/www/vhosts/{{ server_hostname }}/ owner={{ web_user }} group=apache state=directory recurse=yes
+
+- name: Change ownership of media folder to apache user and group apache
+  file: path=/var/www/vhosts/{{ server_hostname }}/media/ owner=apache group=apache state=directory recurse=yes
+
+- name: Correct permissions 1
+  shell: chdir=/var/www/vhosts/{{ server_hostname }}/ find . -type f -exec chmod 644 {} \;
+
+- name: Correct permissions 2
+  shell: chdir=/var/www/vhosts/{{ server_hostname }}/ find . -type d -exec chmod 755 {} \;
+
+- name: Correct permissions 3
+  shell: chdir=/var/www/vhosts/{{ server_hostname }}/ chmod o+w var var/.htaccess app/etc
+
+- name: Correct permissions 4
+  shell: chdir=/var/www/vhosts/{{ server_hostname }}/ chmod -R o+w media
+
 - name: Refresh Index
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ php -f shell/indexer.php reindexall
 
 - name: Change execute mage
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ chmod 775 mage
+
+- name: Folder cache 777
+  shell: chdir=/var/www/vhosts/{{ server_hostname }}/var/ chmod -R 777 cache
   
 - name: Install Varnish Extension
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ ./mage install http://connect20.magentocommerce.com/community/ Varnish_Cache
+  when: varnish_install == 'install'
   
 - name: Remove TAR files
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ rm -rf magento-{{ magento_version }}.tar.gz magento-sample-data-{{ sample_version }}.tar.gz

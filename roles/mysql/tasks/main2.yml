@@ -1,0 +1,6 @@
+---
+- include: mysql.yml
+  when: db_choice == 'mysql'
+
+- include: percona.yml
+  when: db_choice == 'percona'

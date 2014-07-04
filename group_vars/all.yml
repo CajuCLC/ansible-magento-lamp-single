@@ -1,0 +1,37 @@
+---
+# Which version of Magento to deploy: http://www.magentocommerce.com/download
+magento_version: 1.9.0.1
+
+# These are the Magento database settings
+magento_db_name: magento
+magento_db_user: magento
+magento_db_password: 102030AA
+
+# You shouldn't need to change this.
+mysql_port: 3306
+
+# This is used for the httpd vhost configuration and folders creation.
+server_hostname: mydomain.com
+
+# Magento Admin info
+magento_admin_first: Admin
+magento_admin_last: Last
+magento_admin_email: admin@mydomain.com
+magento_admin_user: admin
+magento_admin_pass: 102030AA
+magento_domain: http://www.mydomain.com/
+
+# sFTP user
+web_user: magento
+
+# Select if you would like mysql or percona installed
+db_choice: mysql
+
+# Select install to install Magento or select dontinstall
+magento_install: install
+
+# Select install to install Sample Data or select dontinstall
+sample_data: install
+
+# Select install to install Varnish or select dontinstall
+varnish_install: install

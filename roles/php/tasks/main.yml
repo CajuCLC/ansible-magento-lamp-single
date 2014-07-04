@@ -11,3 +11,4 @@
     - php-gd
     - php-mcrypt
     - mod_ssl
+    - vim

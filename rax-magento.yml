@@ -1,0 +1,54 @@
+# Ansible playbook to create a Rackspace Cloud Server and install Magento.
+# After server is created it will use rax_adminpass and install packages.
+# Change file rax.py with your username and api_key for auth.
+# Run with: ansible-playbook -i hosts.yml rax-magento.yml -vvv
+# For image and flavor list check file lists.txt
+# Created by Eric Cavalcanti - eric.cavalcanti@rackspace.com
+
+---
+- name: Build environment
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  tasks:
+    - name: Server create request
+      local_action:
+        module: rax
+        credentials: rax.py
+        name: magento
+        flavor: performance1-2
+        image: 592c879e-f37d-43e6-8b54-8c2d97cf04d4
+        disk_config: manual
+        networks:
+          - public
+          - private
+        region: IAD
+        state: present
+        wait: yes
+      register: rax
+
+    - name: Add servers to web host group
+      local_action:
+        module: add_host
+        hostname: "{{ item.name }}"
+        ansible_ssh_host: "{{ item.rax_accessipv4 }}"
+        ansible_ssh_pass: "{{ item.rax_adminpass }}"
+        ansible_ssh_user: root
+        groupname: web
+      with_items: rax.instances
+      when: rax.action == 'create'
+    
+    - name: Wait few seconds before connection
+      wait_for: port=22 delay=20
+
+- name: Install magento, MySQL, httpd, PHP and Varnish
+  hosts: web
+
+  roles:
+    - common
+    - { role: mysql, when: db_choice == 'mysql' }
+    - { role: percona, when: db_choice == 'percona' }
+    - httpd
+    - php
+    - { role: varnish, when: varnish_install == 'install' }
+    - { role: magento, when: magento_install == 'install' }

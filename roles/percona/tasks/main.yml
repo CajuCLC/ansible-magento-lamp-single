@@ -1,0 +1,22 @@
+---
+- name: Install Repository For Percona
+  shell: rpm -Uhv http://www.percona.com/downloads/percona-release/percona-release-0.0-1.x86_64.rpm
+
+- name: Install Percona package
+  yum: name={{ item }} state=present
+  with_items:
+   - libselinux-python
+   - libsemanage-python
+   - Percona-Server-shared-compat.x86_64
+   - Percona-Server-client-55.x86_64
+   - Percona-Server-server-55.x86_64
+   - Percona-Server-shared-55.x86_64
+   - MySQL-python
+
+- name: Create Percona configuration file
+  template: src=my.cnf.j2 dest=/etc/my.cnf
+  notify: 
+  - restart mysql
+
+- name: Start Percona Service
+  service: name=mysql state=started enabled=true

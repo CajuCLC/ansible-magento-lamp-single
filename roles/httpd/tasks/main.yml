@@ -4,16 +4,27 @@
 
 - name: Create Folder
   command: mkdir -p /etc/httpd/vhost.d/
-  
-- name: Copy httpd configuration for domain
-  template: src=vhost.conf dest=/etc/httpd/vhost.d/{{ server_hostname }}.conf
 
 - name: Copy httpd configuration for httpd
   template: src=httpd.conf dest=/etc/httpd/conf/httpd.conf
+  
+- name: Copy httpd configuration for domaini whithout varnish
+  template: src=vhost.conf dest=/etc/httpd/vhost.d/{{ server_hostname }}.conf
+  when: varnish_install != 'install'
 
-- name: Copy httpd configuration for ports
+- name: Copy httpd configuration for ports without varnish
   template: src=ports.conf dest=/etc/httpd/ports.conf
   notify: restart httpd
+  when: varnish_install != 'install'
+
+- name: Copy httpd configuration for domain with varnish
+  template: src=vhost_varnish.conf dest=/etc/httpd/vhost.d/{{ server_hostname }}.conf
+  when: varnish_install == 'install'
+
+- name: Copy httpd configuration for ports with varnish
+  template: src=ports_varnish.conf dest=/etc/httpd/ports.conf
+  notify: restart httpd
+  when: varnish_install == 'install'
 
 - name: restart httpd
   service: name=httpd state=started enabled=yes

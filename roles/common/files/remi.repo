@@ -1,0 +1,35 @@
+[remi]
+name=Les RPM de remi pour Enterprise Linux $releasever - $basearch
+#baseurl=http://rpms.famillecollet.com/enterprise/$releasever/remi/$basearch/
+mirrorlist=http://rpms.famillecollet.com/enterprise/$releasever/remi/mirror
+enabled=1
+gpgcheck=1
+gpgkey=http://rpms.famillecollet.com/RPM-GPG-KEY-remi
+
+[remi-php55]
+name=Les RPM de remi de PHP 5.5 pour Enterprise Linux $releasever - $basearch
+#baseurl=http://rpms.famillecollet.com/enterprise/$releasever/php55/$basearch/
+mirrorlist=http://rpms.famillecollet.com/enterprise/$releasever/php55/mirror
+# WARNING: If you enable this repository, you must also enable "remi"
+enabled=0
+gpgcheck=1
+gpgkey=http://rpms.famillecollet.com/RPM-GPG-KEY-remi
+
+[remi-php56]
+name=Les RPM de remi de PHP 5.6 pour Enterprise Linux $releasever - $basearch
+#baseurl=http://rpms.famillecollet.com/enterprise/$releasever/php56/$basearch/
+mirrorlist=http://rpms.famillecollet.com/enterprise/$releasever/php56/mirror
+# WARNING: If you enable this repository, you must also enable "remi"
+enabled=0
+gpgcheck=1
+gpgkey=http://rpms.famillecollet.com/RPM-GPG-KEY-remi
+
+[remi-test]
+name=Les RPM de remi en test pour Enterprise Linux $releasever - $basearch
+#baseurl=http://rpms.famillecollet.com/enterprise/$releasever/test/$basearch/
+mirrorlist=http://rpms.famillecollet.com/enterprise/$releasever/test/mirror
+# WARNING: If you enable this repository, you must also enable "remi"
+enabled=0
+gpgcheck=1
+gpgkey=http://rpms.famillecollet.com/RPM-GPG-KEY-remi
+
