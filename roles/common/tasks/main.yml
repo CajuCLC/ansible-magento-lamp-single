@@ -13,7 +13,3 @@
   
 - name: Copy the EPEL repository definition
   copy: src=remi.repo dest=/etc/yum.repos.d/remi.repo
-
-- name: Set up iptables rules
-  copy: src=iptables-save dest=/etc/sysconfig/iptables
-  notify: restart iptables

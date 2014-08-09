@@ -5,10 +5,10 @@
     - php
     - php-xml
     - php-pdo_mysql
-    - php-xml
     - php-mbstring
     - php-mysql
     - php-gd
     - php-mcrypt
+    - php-soap
     - mod_ssl
     - vim

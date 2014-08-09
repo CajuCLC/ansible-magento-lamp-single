@@ -1,4 +1,7 @@
 ---
+- name: Open port 80
+  shell: sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
+
 - name: Install httpd
   yum: name=httpd state=present
 
@@ -26,5 +29,33 @@
   notify: restart httpd
   when: varnish_install == 'install'
 
-- name: restart httpd
+- name: httpd Start initial
   service: name=httpd state=started enabled=yes
+
+- name: Create Folder
+  command: mkdir -p /var/www/vhosts/{{ server_hostname }}/
+  when: magento_install != 'install'
+
+- name: Add user "web_user"
+  user: name={{ web_user }} group=apache home=/var/www/vhosts/{{ server_hostname }}
+  when: magento_install != 'install'
+
+- name: Create database
+  mysql_db: name={{ magento_db_name }} state=present
+  when: magento_install != 'install'
+
+- name: Create database user
+  mysql_user: name={{ magento_db_user }} password={{ magento_db_password }} priv={{ magento_db_name }}.*:ALL host='localhost' state=present
+  when: magento_install != 'install'
+
+- name: Change ownership of folder to user created and group apache
+  file: path=/var/www/vhosts/{{ server_hostname }}/ owner={{ web_user }} group=apache state=directory recurse=yes
+  when: magento_install != 'install'
+
+- name: restart iptables
+  service: name=iptables state=restarted
+  when: magento_install != 'install'
+
+- name: restart httpd
+  service: name=httpd state=restarted
+  when: magento_install != 'install'

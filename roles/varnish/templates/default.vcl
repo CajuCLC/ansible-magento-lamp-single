@@ -183,24 +183,6 @@ sub vcl_fetch {
 }
 
 sub vcl_deliver {
-    # debug info
-    if (resp.http.X-Cache-Debug) {
-        if (obj.hits > 0) {
-            set resp.http.X-Cache = "HIT";
-            set resp.http.X-Cache-Hits = obj.hits;
-        } else {
-           set resp.http.X-Cache = "MISS";
-        }
-        set resp.http.X-Cache-Expires = resp.http.Expires;
-    } else {
-        # remove Varnish/proxy header
-        remove resp.http.X-Varnish;
-        remove resp.http.Via;
-        remove resp.http.Age;
-        remove resp.http.X-Purge-URL;
-        remove resp.http.X-Purge-Host;
-    }
-
     if (resp.http.magicmarker) {
         # Remove the magic marker
         unset resp.http.magicmarker;
@@ -208,7 +190,7 @@ sub vcl_deliver {
         set resp.http.Cache-Control = "no-store, no-cache, must-revalidate, post-check=0, pre-check=0";
         set resp.http.Pragma = "no-cache";
         set resp.http.Expires = "Mon, 31 Mar 2008 10:00:00 GMT";
-        set resp.http.Age = "0";
+        set resp.http.Age = "2";
     }
 }
 
