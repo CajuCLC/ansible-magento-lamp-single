@@ -1,6 +1,6 @@
 # Ansible playbook to install Magento on a server.
 # Change hosts.yml to your server IP.
-# Run with: ansible-playbook -i hosts.yml magento.yml -vvv
+# Run with: ansible-playbook -i hosts.yml magento.yml -k -vvv
 # Created by Eric Cavalcanti - eric.cavalcanti@rackspace.com
 
 ---
