@@ -6,7 +6,7 @@
     - php-xml
     - php-pdo_mysql
     - php-mbstring
-    - php-mysql
+    - php-mysqlnd
     - php-gd
     - php-mcrypt
     - php-soap
