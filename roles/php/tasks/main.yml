@@ -1,14 +1,14 @@
 ---
-- name: Install php and deps 
+- name: Install php and deps
   yum: name={{ item }} state=present
   with_items:
-    - php
-    - php-xml
-    - php-pdo_mysql
-    - php-mbstring
-    - php-mysqlnd
-    - php-gd
-    - php-mcrypt
-    - php-soap
-    - mod_ssl
+    - php56
+    - php56-xml
+    - php56-pdo
+    - php56-mbstring
+    - php56-mysqlnd
+    - php56-gd
+    - php56-mcrypt
+    - php56-soap
+    - mod24_ssl
     - vim

@@ -6,15 +6,18 @@
   shell: /etc/init.d/iptables save
 
 - name: Install httpd
-  yum: name=httpd state=present
+  yum: name={{ item }} state=present
+  with_items:
+    - httpd24
+    - httpd24-tools
 
 - name: Create Folder
   command: mkdir -p /etc/httpd/vhost.d/
 
 - name: Copy httpd configuration for httpd
   template: src=httpd.conf dest=/etc/httpd/conf/httpd.conf
-  
-- name: Copy httpd configuration for domaini whithout varnish
+
+- name: Copy httpd configuration for domain whithout varnish
   template: src=vhost.conf dest=/etc/httpd/vhost.d/{{ server_hostname }}.conf
   when: varnish_install != 'install'
 

@@ -4,14 +4,17 @@
   when: "{{ magento_version | version_compare('1.8.1.0', '<=') }}"
 
 - name: Sample Version 1.9
-  set_fact: sample_version="1.9.0.0"
-  when: "{{ magento_version | version_compare('1.9.0.0', '>=') }}"
+  set_fact: sample_version="1.9.2.4"
+  when: "{{ magento_version | version_compare('1.9.2.4', '>=') }}"
 
 - name: Create Folder
   command: mkdir -p /var/www/vhosts/{{ server_hostname }}/
-  
+
 - name: Download magento
-  get_url: url=http://www.magentocommerce.com/downloads/assets/{{ magento_version }}/magento-{{ magento_version }}.tar.gz dest=/var/www/vhosts/{{ server_hostname }}/magento-{{ magento_version }}.tar.gz
+  get_url: url=https://s3.amazonaws.com/acquiaeric/magento-1.9.3.2-2017-02-07-01-55-11.tar.gz dest=/var/www/vhosts/{{ server_hostname }}/magento-{{ magento_version }}.tar.gz
+
+#- name: Download magento
+  #get_url: url=http://www.magentocommerce.com/downloads/assets/{{ magento_version }}/magento-{{ magento_version }}.tar.gz dest=/var/www/vhosts/{{ server_hostname }}/magento-{{ magento_version }}.tar.gz
 
 - name: Download Sample
   get_url: url=http://www.magentocommerce.com/downloads/assets/{{ sample_version }}/magento-sample-data-{{ sample_version }}.tar.gz dest=/var/www/vhosts/{{ server_hostname }}/magento-sample-data-{{ sample_version }}.tar.gz
@@ -23,7 +26,7 @@
 - name: Extract Sample
   command: chdir=/var/www/vhosts/{{ server_hostname }}/ /bin/tar xvf magento-sample-data-{{ sample_version }}.tar.gz
   when: sample_data == 'install'
- 
+
 - name: Move Media Sample
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ cp -rf magento-sample-data-{{ sample_version }}/media/* magento/media/
   when: sample_data == 'install'
@@ -41,7 +44,7 @@
 
 - name: Move htaccess file
   command: chdir=/var/www/vhosts/{{ server_hostname }}/ mv -f magento/.htaccess .
-  
+
 - name: Add user "web_user"
   user: name={{ web_user }} group=apache home=/var/www/vhosts/{{ server_hostname }}
 
@@ -50,7 +53,7 @@
 
 - name: Create magento database user
   mysql_user: name={{ magento_db_user }} password={{ magento_db_password }} priv={{ magento_db_name }}.*:ALL host='localhost' state=present
-  
+
 - name: Import Sample Database
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ mysql -u {{ magento_db_user }} -p{{ magento_db_password }} {{ magento_db_name }} < data.sql
   when: sample_data == 'install'
@@ -60,7 +63,7 @@
 
 - name: Mage Setup
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ ./mage mage-setup .
-  
+
 - name: Mage Stable State
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ ./mage config-set preferred_state stable
 
@@ -93,20 +96,20 @@
 
 - name: Folder cache 777
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/var/ chmod -R 777 cache
-  
+
 - name: Install Varnish Extension
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ ./mage install http://connect20.magentocommerce.com/community/ Varnish_Cache
   when: varnish_install == 'install'
-  
+
 - name: Remove TAR files
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ rm -rf magento-{{ magento_version }}.tar.gz magento-sample-data-{{ sample_version }}.tar.gz
 
 - name: Remove SQL and txt files
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ rm -rf *.sample *.txt data.sql
-  
+
 - name: Remove Magento Folder and Sample Folder
   shell: chdir=/var/www/vhosts/{{ server_hostname }}/ rm -rf magento/ magento-sample-data-{{ sample_version }}/
-  
+
 - name: restart iptables
   service: name=iptables state=restarted
 

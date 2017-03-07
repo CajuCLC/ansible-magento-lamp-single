@@ -3,13 +3,13 @@
   yum: name={{ item }} state=present
   with_items:
    - mysql-server
-   - MySQL-python
+   - MySQL-python27
    - libselinux-python
    - libsemanage-python
 
 - name: Create Mysql configuration file
   template: src=my.cnf.j2 dest=/etc/my.cnf
-  notify: 
+  notify:
   - restart mysql
 
 - name: Start Mysql Service
