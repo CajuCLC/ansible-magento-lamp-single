@@ -1,7 +1,8 @@
 # Ansible playbook to install Magento on a server.
 # Change hosts.yml to your server IP.
-# Run with: ansible-playbook -i hosts.yml magento.yml -k -vvv
-# Created by Eric Cavalcanti - eric.cavalcanti@rackspace.com
+# Make sure you change to your private-key used on AWS to connect to the ec2.
+# Run with: ansible-playbook -i hosts.yml magento.yml -k -vvv --private-key ~/.ssh/id_rsa --become
+# Created by Eric Cavalcanti - ecavalcanti.it@gmail.com
 
 ---
 - name: Install magento, MySQL, httpd, PHP and Varnish
