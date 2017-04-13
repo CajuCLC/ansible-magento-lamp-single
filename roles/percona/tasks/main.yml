@@ -1,6 +1,6 @@
 ---
 - name: Install Repository For Percona
-  shell: rpm -Uhv http://www.percona.com/downloads/percona-release/percona-release-0.0-1.x86_64.rpm
+  shell: rpm -Uhv https://www.percona.com/redir/downloads/percona-release/redhat/latest/percona-release-0.1-4.noarch.rpm
 
 - name: Install Percona package
   yum: name={{ item }} state=present
@@ -8,10 +8,10 @@
    - libselinux-python
    - libsemanage-python
    - Percona-Server-shared-compat.x86_64
-   - Percona-Server-client-55.x86_64
-   - Percona-Server-server-55.x86_64
-   - Percona-Server-shared-55.x86_64
-   - MySQL-python
+   - Percona-Server-client-57.x86_64
+   - Percona-Server-server-57.x86_64
+   - Percona-Server-shared-57.x86_64
+   - MySQL-python27
 
 - name: Create Percona configuration file
   template: src=my.cnf.j2 dest=/etc/my.cnf
